@@ -1,7 +1,4 @@
 # BookCheck - Full Project
-Author: Aliemeke Joseph
-Matric No: 23/0073
-Department: Software Engineering
 
 ## Structure
 /server - backend (Node/Express/MongoDB)
