@@ -10,6 +10,7 @@ export default function Home({ setView }) {
             {/* decorative image, kept in CSS as background for performance */}
           </div>
           <div className="home-hero-copy">
+            
             <h1>Your Next Favorite Book is Waiting</h1>
             <p>
               Dive into a world of stories! With BookCheck, you can discover trending books,
