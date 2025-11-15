@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+        options: --health-cmd "mongo --eval 'db.adminCommand({ ping: 1 })'" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install server deps
+        working-directory: ./server
+        run: npm ci
+
+      - name: Install client deps
+        working-directory: ./client
+        run: npm ci
+
+      - name: Start server in background
+        working-directory: ./server
+        env:
+          MONGO_URI: mongodb://localhost:27017/bookcheck
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci-secret' }}
+          PORT: 3001
+          HOST: 0.0.0.0
+        run: |
+          nohup node server.js &
+          sleep 4
+
+      - name: Wait for server health
+        run: |
+          echo "Waiting for server /api/health..."
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:3001/api/health >/dev/null; then
+              echo "Server is healthy"; break;
+            fi
+            echo "Waiting... ($i)";
+            sleep 1;
+          done
+          if ! curl -sSf http://127.0.0.1:3001/api/health >/dev/null; then
+            echo "Server did not become healthy in time"; exit 1;
+          fi
+
+      # Smoke tests removed for deployment build — CI will still build the client and server images
+
+      - name: Build client
+        working-directory: ./client
+        run: npm run build
+
+      - name: Optionally publish Docker images to GHCR
+        if: ${{ secrets.GITHUB_TOKEN != '' }}
+        env:
+          REGISTRY: ghcr.io
+          IMAGE_NAME_SERVER: ${{ github.repository_owner }}/bookcheck-server
+          IMAGE_NAME_CLIENT: ${{ github.repository_owner }}/bookcheck-client
+        run: |
+          echo "Logging into GHCR"
+        
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push server image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./server
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/bookcheck-server:latest
+
+      - name: Build and push client image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/bookcheck-client:latest

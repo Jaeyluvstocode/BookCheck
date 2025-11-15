@@ -15,8 +15,8 @@ const ReviewSchema = new mongoose.Schema(
 const BookSchema = new mongoose.Schema(
   {
     title: { type: String, required: [true, 'Book title is required'] },
-    author: { type: String, default: '' },
-    authors: { type: [String], default: [] }, // support multiple authors
+    // Support multiple authors as an array of strings
+    authors: { type: [String], default: [] },
     genre: { type: String, default: '' },
     description: { type: String, default: 'No description provided.' },
     coverUrl: { type: String, default: '' },

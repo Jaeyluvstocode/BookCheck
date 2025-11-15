@@ -4,12 +4,19 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Books from './pages/Books';
 import Home from './pages/Home'; // ✅ Import new Home page
+import Toast from './components/Toast';
 
-const API = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
+const API = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || 'null');
+    } catch (e) {
+      return null;
+    }
+  });
   const [view, setView] = useState('home'); // ✅ Show Home first
 
   useEffect(() => {
@@ -23,6 +30,13 @@ export default function App() {
     setView('home');
     localStorage.removeItem('user');
   };
+
+  // Toast notifications
+  const [toast, setToast] = React.useState(null);
+  const notify = (message, type = 'info', duration = 3500) => {
+    setToast({ message, type, duration });
+  };
+  const clearToast = () => setToast(null);
 
   return (
     <div className="app">
@@ -63,15 +77,17 @@ export default function App() {
               setView('dashboard');
             }}
             apiBase={API}
+            notify={notify}
           />
         )}
 
-        {view === 'register' && <Register onLogin={() => setView('login')} apiBase={API} />}
+        {view === 'register' && <Register onLogin={() => setView('login')} apiBase={API} notify={notify} />}
 
-        {view === 'dashboard' && <Dashboard token={token} apiBase={API} user={user} setView={setView} />}
+        {view === 'dashboard' && <Dashboard token={token} apiBase={API} user={user} setView={setView} notify={notify} />}
 
-        {view === 'books' && <Books token={token} setView={setView} apiBase={API} />}
+        {view === 'books' && <Books token={token} setView={setView} apiBase={API} notify={notify} />}
       </main>
+      <Toast toast={toast} onClose={clearToast} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Register({ onLogin, apiBase }) {
+export default function Register({ onLogin, apiBase, notify }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,15 +16,23 @@ export default function Register({ onLogin, apiBase }) {
         body: JSON.stringify({ username, email, password })
       });
       const data = await res.json();
-      if (!res.ok) return setMsg(data.message || 'Registration failed');
+      if (!res.ok) {
+        const message = data.message || 'Registration failed';
+        setMsg(message);
+        if (notify) notify(message, 'error');
+        return;
+      }
       setMsg('Registered! You can now log in.');
+      if (notify) notify('Registered! You can now log in.', 'success');
     } catch (err) {
       setMsg('Network error');
+      if (notify) notify('Network error', 'error');
     }
   };
 
   return (
-    <div className="main">
+    <div className="auth-page">
+      <div className="auth-card">
       <form onSubmit={submit}>
         <h2>Register</h2>
         <input
@@ -72,6 +80,8 @@ export default function Register({ onLogin, apiBase }) {
           </button>
         </p>
       </form>
+      <div className="auth-note">Secure sign up — start adding your reviews today.</div>
+      </div>
     </div>
   );
 }

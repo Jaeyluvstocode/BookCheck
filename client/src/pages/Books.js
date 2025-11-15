@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './Books.css';
 
-export default function Books({ token, setView, apiBase }) {
+export default function Books({ token, setView, apiBase, notify }) {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState('');
   const [genre, setGenre] = useState('');
   const [selected, setSelected] = useState(null);
   const [reviewForm, setReviewForm] = useState({ rating: '', comment: '' });
+  const [error, setError] = useState('');
 
   const headers = {
     'Content-Type': 'application/json',
@@ -22,6 +23,8 @@ export default function Books({ token, setView, apiBase }) {
 
       const res = await fetch(`${apiBase}/books?${params.toString()}`, { headers });
       let data = await res.json();
+      // support old array response or new { success, books } shape
+      if (data && data.books) data = data.books;
 
       // Add dummy reviews for testing if none
       if (Array.isArray(data)) {
@@ -40,7 +43,8 @@ export default function Books({ token, setView, apiBase }) {
       setBooks(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      alert('Failed to load books');
+      if (notify) notify('Failed to load books', 'error');
+      else alert('Failed to load books');
     }
   };
 
@@ -51,7 +55,8 @@ export default function Books({ token, setView, apiBase }) {
   const viewDetails = async (id) => {
     try {
       const res = await fetch(`${apiBase}/books/${id}`, { headers });
-      const data = await res.json();
+      let data = await res.json();
+      if (data && data.book) data = data.book;
 
       if (!data.reviews || data.reviews.length === 0) {
         data.reviews = [
@@ -64,16 +69,19 @@ export default function Books({ token, setView, apiBase }) {
       setSelected(data);
     } catch (err) {
       console.error(err);
-      alert('Failed to load book details');
+      if (notify) notify('Failed to load book details', 'error');
+      else alert('Failed to load book details');
     }
   };
 
   const submitReview = async (e) => {
     e.preventDefault();
     if (!selected) return;
-    if (!token) return alert('You must be logged in to submit a review.');
+    if (!token) return notify ? notify('You must be logged in to submit a review.', 'error') : alert('You must be logged in to submit a review.');
+    if (!reviewForm.rating) return notify ? notify('Please select a rating.', 'error') : alert('Please select a rating.');
 
     try {
+      console.log('[submitReview] Sending:', reviewForm);
       const res = await fetch(`${apiBase}/books/${selected._id}/reviews`, {
         method: 'POST',
         headers: {
@@ -84,20 +92,27 @@ export default function Books({ token, setView, apiBase }) {
       });
 
       const data = await res.json();
+      console.log('[submitReview] Response status:', res.status, 'Data:', data);
       if (res.ok) {
-        // Add review locally
+        const saved = data.review || null;
+        // optimistic update: append the saved review returned by server
         setSelected((prev) => ({
           ...prev,
-          reviews: [...(prev.reviews || []), { ...data, username: data.username || 'You', createdAt: new Date() }],
+          reviews: saved ? [...(prev.reviews || []), saved] : prev.reviews,
+          avgRating: data.avgRating || prev.avgRating,
         }));
-        alert('Review saved!');
         setReviewForm({ rating: '', comment: '' });
+        setError('');
+        if (notify) notify('Review saved', 'success');
       } else {
-        alert(data.message || 'Failed to save review');
+        const msg = data.message || 'Failed to save review';
+        setError(msg);
+        if (notify) notify(msg, 'error');
       }
     } catch (err) {
-      console.error(err);
-      alert('Failed to save review');
+      console.error('[submitReview] Error:', err);
+      setError('Failed to save review');
+      if (notify) notify('Failed to save review', 'error');
     }
   };
 
@@ -194,20 +209,21 @@ export default function Books({ token, setView, apiBase }) {
 
                 <form className="review-form" onSubmit={submitReview}>
                   <h6>Leave a review</h6>
+                  {error && <div className="review-error">{error}</div>}
                   <div className="review-inputs">
-                    <select
-                      value={reviewForm.rating}
-                      onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
-                      required
-                    >
-                      <option value="">Rate</option>
-                      <option value="5">5 - Excellent</option>
-                      <option value="4">4 - Very good</option>
-                      <option value="3">3 - Good</option>
-                      <option value="2">2 - Fair</option>
-                      <option value="1">1 - Poor</option>
-                    </select>
-                    <button type="submit">Submit</button>
+                    <div className="star-select">
+                      {[5,4,3,2,1].map((s) => (
+                        <button
+                          type="button"
+                          key={s}
+                          className={`star-btn ${reviewForm.rating >= s ? 'active' : ''}`}
+                          onClick={() => setReviewForm({ ...reviewForm, rating: s })}
+                        >
+                          {reviewForm.rating >= s ? '★' : '☆'}
+                        </button>
+                      ))}
+                    </div>
+                    <button type="submit" disabled={!reviewForm.rating} className="submit-btn">Submit</button>
                   </div>
                   <textarea
                     name="comment"

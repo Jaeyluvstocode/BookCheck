@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+
+  server:
+    build: ./server
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/bookcheck
+    depends_on:
+      - mongo
+    ports:
+      - 3001:3001
+    volumes:
+      - ./server/uploads:/app/uploads
+    secrets:
+      - jwt_secret
+
+  client:
+    build: ./client
+    restart: unless-stopped
+    ports:
+      - 3000:80
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
+secrets:
+  jwt_secret:
+    file: ./.jwt_secret

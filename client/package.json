@@ -2,7 +2,7 @@
   "name": "bookcheck-client",
   "version": "1.0.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "multer": "^2.0.2",
     "react": "^18.2.0",

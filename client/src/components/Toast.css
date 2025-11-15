@@ -1,0 +1,16 @@
+.app-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  z-index: 9999;
+  cursor: pointer;
+  min-width: 180px;
+}
+.app-toast.info { background: #222; }
+.app-toast.success { background: #2e7d32; }
+.app-toast.error { background: #b00020; }

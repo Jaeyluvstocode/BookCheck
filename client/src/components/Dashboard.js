@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css'; // Import the CSS we rewrote
 
-export default function Dashboard({ token, apiBase, user }) {
+export default function Dashboard({ token, apiBase, user, notify }) {
   const [books, setBooks] = useState([]);
   const [form, setForm] = useState({
     title: '',
@@ -20,11 +20,12 @@ export default function Dashboard({ token, apiBase, user }) {
   const loadBooks = async () => {
     try {
       const res = await fetch(`${apiBase}/books`);
-      const data = await res.json();
+      let data = await res.json();
+      if (data && data.books) data = data.books;
       setBooks(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      alert('Failed to load books');
+      if (notify) notify('Failed to load books', 'error'); else alert('Failed to load books');
     }
   };
 
@@ -50,14 +51,18 @@ export default function Dashboard({ token, apiBase, user }) {
       });
 
       const data = await res.json();
-      if (!res.ok) return alert(data.message || 'Failed');
+      if (!res.ok) {
+        const msg = data.message || 'Failed';
+        if (notify) notify(msg, 'error'); else alert(msg);
+        return;
+      }
 
       setForm({ title: '', author: '', genre: '', description: '', cover: null, pdf: null });
       setEditing(null);
       loadBooks();
     } catch (err) {
       console.error(err);
-      alert('Network error');
+      if (notify) notify('Network error', 'error'); else alert('Network error');
     }
   };
 
@@ -85,19 +90,21 @@ export default function Dashboard({ token, apiBase, user }) {
       if (res.ok) loadBooks();
       else {
         const data = await res.json();
-        alert(data.message || 'Failed to delete');
+        if (notify) notify(data.message || 'Failed to delete', 'error');
+        else alert(data.message || 'Failed to delete');
       }
     } catch (err) {
       console.error(err);
-      alert('Network error');
+      if (notify) notify('Network error', 'error');
+      else alert('Network error');
     }
   };
 
   // Submit review
   const submitReview = async (bookId) => {
-    if (!token) return alert('You must be logged in to review');
+    if (!token) return notify ? notify('You must be logged in to review', 'error') : alert('You must be logged in to review');
     const reviewForm = reviewForms[bookId];
-    if (!reviewForm) return;
+    if (!reviewForm || !reviewForm.rating) return notify ? notify('Please select a rating', 'error') : alert('Please select a rating');
 
     try {
       const res = await fetch(`${apiBase}/books/${bookId}/reviews`, {
@@ -109,13 +116,19 @@ export default function Dashboard({ token, apiBase, user }) {
         body: JSON.stringify(reviewForm),
       });
       const data = await res.json();
-      if (!res.ok) return alert(data.message || 'Failed to submit review');
+      if (!res.ok) {
+        const msg = data.message || 'Failed to submit review';
+        if (notify) notify(msg, 'error'); else alert(msg);
+        return;
+      }
 
+      // optimistic UI: refresh single book or reload list
       setReviewForms({ ...reviewForms, [bookId]: { rating: 5, comment: '' } });
+      if (notify) notify('Review submitted', 'success');
       loadBooks();
     } catch (err) {
       console.error(err);
-      alert('Network error');
+      if (notify) notify('Network error', 'error'); else alert('Network error');
     }
   };
 

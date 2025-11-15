@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-export default function Login({ onRegister, onSuccess, apiBase }) {
-  const [username, setUsername] = useState('');
+export default function Login({ onRegister, onSuccess, apiBase, notify }) {
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
 
@@ -9,28 +9,41 @@ export default function Login({ onRegister, onSuccess, apiBase }) {
     e.preventDefault();
     setErr('');
     try {
+      setErr('');
+      const payload = { password };
+      if (identifier.includes('@')) payload.email = identifier;
+      else payload.username = identifier;
+
       const res = await fetch(`${apiBase}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) return setErr(data.message || 'Login failed');
+      if (!res.ok) {
+        const message = data.message || 'Login failed';
+        setErr(message);
+        if (notify) notify(message, 'error');
+        return;
+      }
+      if (notify) notify('Logged in', 'success');
       onSuccess(data.token, data.user);
     } catch (err) {
       setErr('Network error');
+      if (notify) notify('Network error', 'error');
     }
   };
 
   return (
-    <div className="main">
+    <div className="auth-page">
+      <div className="auth-card">
       <form onSubmit={submit}>
         <h2>Login</h2>
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
+          placeholder="Username or Email"
+          value={identifier}
+          onChange={e => setIdentifier(e.target.value)}
           required
         />
         <input
@@ -49,6 +62,8 @@ export default function Login({ onRegister, onSuccess, apiBase }) {
           </button>
         </p>
       </form>
+      <div className="auth-note">Join BookCheck to discover and review books.</div>
+      </div>
     </div>
   );
 }

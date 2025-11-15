@@ -9,8 +9,8 @@ router.post('/register', [
   body('password').isLength({ min: 6 }).withMessage('Password at least 6 chars')
 ], authController.register);
 
+// Accept either `username` or `email` for login
 router.post('/login', [
-  body('username').notEmpty().withMessage('Username required'),
   body('password').notEmpty().withMessage('Password required')
 ], authController.login);
 
