@@ -1,50 +1,21 @@
-# --- Node.js dependencies ---
+# Node / backend
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-
-# --- Build output ---
-build/
-dist/
-.cache/
-.next/
-out/
-
-# --- Environment files ---
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
- .jwt_secret
-
-# --- Logs ---
-logs
+.jwt_secret
 *.log
-debug.log
-error.log
-
-# --- OS / Editor specific ---
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-*.swp
-
-# --- Coverage / Testing ---
 coverage/
-*.lcov
+dist/
 
-# --- Temporary files ---
-tmp/
-temp/
+# Frontend / React
+build/
+*.env.local
 
-# --- Backend uploads (optional) ---
-uploads/
-public/uploads/
-
-# --- Misc ---
-*.bak
-*.old
+# Test / Cleanup scripts
+review-test.html
+simple-test.js
+test-delete-review.js
+test-port.js
+test-review.js
+admin-cleanup.js
+cleanup.js
+delete-test-books.js
