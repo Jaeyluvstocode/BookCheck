@@ -1,104 +1,54 @@
-/* ------------------------------------------------------ */
-/*  GLOBAL STYLING — MATCHES DASHBOARD THEME EXACTLY       */
-/* ------------------------------------------------------ */
-html, body {
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', 'Poppins', sans-serif;
-  background: linear-gradient(180deg, #c7bdb3 0%, #b3b0ae 100%);
-  color: #362f28;
-}
-
-/* Main wrapper */
-.books-container {
-  width: 100%;
-  max-width: 1300px;
-  margin: auto;
+.books-page {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  box-sizing: border-box;
 }
 
-.books-title {
+.page-title {
   text-align: center;
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #362f28;
 }
-
-/* ------------------------------------------------------ */
-/* BOOK GRID — RESPONSIVE                                 */
-/* ------------------------------------------------------ */
 
 .book-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  width: 100%;
 }
-
-@media (min-width: 900px) {
-  .book-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media (min-width: 600px) and (max-width: 899px) {
-  .book-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 599px) {
-  .book-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* ------------------------------------------------------ */
-/* BOOK CARD — MATCHES DASHBOARD STYLE                    */
-/* ------------------------------------------------------ */
 
 .book-card {
-  background: #fffdfc;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(54,47,40,0.06);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
 }
 
 .book-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 45px rgba(75, 63, 47, 0.18);
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 .book-card img {
   width: 100%;
-  height: 200px;
+  height: 250px;
   object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 8px 22px rgba(54,47,40,0.08);
+  border-radius: 8px;
 }
 
 .book-card h3 {
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: 16px;
-  font-weight: 700;
-  color: #362f28;
-  word-wrap: break-word;
+  font-weight: 600;
 }
 
-/* ------------------------------------------------------ */
-/* SELECTED BOOK PANEL                                    */
-/* ------------------------------------------------------ */
-
 .selected-book {
-  margin-top: 35px;
-  background: #fffdfc;
-  padding: 22px;
+  margin-top: 30px;
+  background: #f7f7f7;
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(54,47,40,0.06);
 }
 
 .selected-book-content {
@@ -108,81 +58,62 @@ html, body {
 }
 
 .selected-book img {
-  width: 180px;
-  height: 260px;
+  width: 200px;
+  height: 290px;
   object-fit: cover;
   border-radius: 10px;
-  box-shadow: 0 8px 22px rgba(54,47,40,0.08);
 }
 
-.selected-book-details {
+.selected-details {
   flex: 1;
-  min-width: 230px;
 }
 
-.selected-book-details h2 {
-  margin: 0 0 10px 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: #362f28;
+.selected-details h2 {
+  margin-bottom: 10px;
 }
 
-/* ------------------------------------------------------ */
-/* BUTTONS — MATCH DASHBOARD BUTTON STYLE                 */
-/* ------------------------------------------------------ */
-
-button {
-  background: #8b6b52;
-  border: none;
-  padding: 12px 16px;
-  color: #fff;
-  font-weight: 700;
-  border-radius: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-  width: 100%;
-  transition: transform 0.12s ease, background 0.12s ease;
-}
-
-button:hover {
-  background: #6b4c3b;
-  transform: translateY(-2px);
-}
-
-/* ------------------------------------------------------ */
-/* REVIEWS SECTION                                        */
-/* ------------------------------------------------------ */
-
-.reviews-section {
-  margin-top: 30px;
+.review-section {
+  margin-top: 20px;
 }
 
 .review-card {
-  background: #fffaf4;
-  padding: 14px;
+  background: white;
+  padding: 12px;
   border-radius: 10px;
-  margin-top: 14px;
-  box-shadow: 0 6px 18px rgba(54,47,40,0.04);
-  word-wrap: break-word;
+  margin-top: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
 }
 
-.review-card .username {
-  font-weight: 700;
-  color: #6b4c3b;
+.review-card strong {
   font-size: 14px;
 }
 
-.review-card .comment {
-  color: #4b3f2f;
+.review-card p {
   font-size: 14px;
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
-/* ------------------------------------------------------ */
-/* MOBILE POLISH                                          */
-/* ------------------------------------------------------ */
+.review-card span {
+  font-size: 12px;
+  color: #777;
+}
 
-@media (max-width: 600px) {
+button {
+  background: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #555;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
   .selected-book-content {
     flex-direction: column;
     align-items: center;
@@ -190,10 +121,6 @@ button:hover {
 
   .selected-book img {
     width: 100%;
-    height: auto;
-  }
-
-  button {
-    width: 100%;
+    max-width: 300px;
   }
 }
