@@ -1,154 +1,199 @@
-/* ================================
-   BOOKS PAGE — FULL RESPONSIVE FIX
-   Everything is scoped to .books-container
-   ================================ */
+/* ------------------------------------------------------ */
+/*  GLOBAL STYLING — MATCHES DASHBOARD THEME EXACTLY       */
+/* ------------------------------------------------------ */
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  background: linear-gradient(180deg, #c7bdb3 0%, #b3b0ae 100%);
+  color: #362f28;
+}
 
-/* Main layout container */
+/* Main wrapper */
 .books-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: auto;
   padding: 20px;
-  overflow-x: hidden;
   box-sizing: border-box;
 }
 
-/* Flex layout: list + selected panel */
-.books-content {
-  display: flex;
-  align-items: flex-start;
+.books-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #362f28;
+}
+
+/* ------------------------------------------------------ */
+/* BOOK GRID — RESPONSIVE                                 */
+/* ------------------------------------------------------ */
+
+.book-grid {
+  display: grid;
   gap: 20px;
   width: 100%;
 }
 
-/* ========== BOOK LIST ========== */
-.book-list {
-  flex: 2;
-  display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+@media (min-width: 900px) {
+  .book-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
-/* Book cards */
-.books-container .book-card {
-  background: #f5efef;
-  border: 1px solid #ece8e8;
-  border-radius: 8px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: transform 0.2s ease;
+@media (min-width: 600px) and (max-width: 899px) {
+  .book-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.books-container .book-card:hover {
-  transform: translateY(-3px);
+@media (max-width: 599px) {
+  .book-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* Card image */
-.books-container .book-card img {
+/* ------------------------------------------------------ */
+/* BOOK CARD — MATCHES DASHBOARD STYLE                    */
+/* ------------------------------------------------------ */
+
+.book-card {
+  background: #fffdfc;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(54,47,40,0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  text-align: center;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(75, 63, 47, 0.18);
+}
+
+.book-card img {
   width: 100%;
-  height: 240px;
+  height: 200px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgba(54,47,40,0.08);
 }
 
-/* Card info */
-.books-container .book-info h3 {
-  font-size: 1.1rem;
-  margin: 0;
+.book-card h3 {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #362f28;
   word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
-/* Book actions */
-.books-container .book-actions {
+/* ------------------------------------------------------ */
+/* SELECTED BOOK PANEL                                    */
+/* ------------------------------------------------------ */
+
+.selected-book {
+  margin-top: 35px;
+  background: #fffdfc;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(54,47,40,0.06);
+}
+
+.selected-book-content {
   display: flex;
-  gap: 8px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
-.books-container .book-actions button {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* ========== SELECTED BOOK PANEL ========== */
-.selected-card {
-  flex: 1.2;
-  background: hsl(60, 100%, 97%);
-  border: 1px solid #f8f7f7;
+.selected-book img {
+  width: 180px;
+  height: 260px;
+  object-fit: cover;
   border-radius: 10px;
-  padding: 20px;
-  height: fit-content;
-  position: sticky;
-  top: 20px;
+  box-shadow: 0 8px 22px rgba(54,47,40,0.08);
 }
 
-/* Selected book image */
-.selected-card img {
+.selected-book-details {
+  flex: 1;
+  min-width: 230px;
+}
+
+.selected-book-details h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #362f28;
+}
+
+/* ------------------------------------------------------ */
+/* BUTTONS — MATCH DASHBOARD BUTTON STYLE                 */
+/* ------------------------------------------------------ */
+
+button {
+  background: #8b6b52;
+  border: none;
+  padding: 12px 16px;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
   width: 100%;
-  max-width: 200px;
-  margin-bottom: 12px;
-  border-radius: 6px;
+  transition: transform 0.12s ease, background 0.12s ease;
 }
 
-/* Prevent title overflow */
-.selected-card h3 {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+button:hover {
+  background: #6b4c3b;
+  transform: translateY(-2px);
 }
 
-/* Reviews */
+/* ------------------------------------------------------ */
+/* REVIEWS SECTION                                        */
+/* ------------------------------------------------------ */
+
+.reviews-section {
+  margin-top: 30px;
+}
+
 .review-card {
-  width: 100%;
-  padding: 10px;
-  background: #e6e3e3;
-  border-radius: 6px;
-  overflow-wrap: break-word;
-  margin-bottom: 10px;
+  background: #fffaf4;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 14px;
+  box-shadow: 0 6px 18px rgba(54,47,40,0.04);
+  word-wrap: break-word;
 }
 
-/* ================================
-   RESPONSIVENESS
-   ================================ */
-
-/* ======= TABLETS ======= */
-@media (max-width: 992px) {
-  .books-content {
-    flex-direction: column;
-  }
-
-  .selected-card {
-    width: 100%;
-    max-width: 100%;
-    position: relative;
-    top: 0;
-  }
-
-  .book-list {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
+.review-card .username {
+  font-weight: 700;
+  color: #6b4c3b;
+  font-size: 14px;
 }
 
-/* ======= MOBILE ======= */
+.review-card .comment {
+  color: #4b3f2f;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* ------------------------------------------------------ */
+/* MOBILE POLISH                                          */
+/* ------------------------------------------------------ */
+
 @media (max-width: 600px) {
-  .books-container {
-    padding: 12px;
+  .selected-book-content {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .book-list {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
+  .selected-book img {
+    width: 100%;
+    height: auto;
   }
 
-  .books-container .book-card img {
-    height: 200px;
-  }
-
-  .books-container .book-actions button {
+  button {
     width: 100%;
   }
 }
