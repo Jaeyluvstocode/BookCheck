@@ -8,7 +8,9 @@
     "multer": "^2.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+     "build": "cd client && npm install && npm run build",
+    "postinstall": "npm run build"
   },
   "scripts": {
     "start": "react-scripts start",
