@@ -276,21 +276,53 @@
     order: 1;
   }
 
-  .selected-book {
-    flex: 1 1 35%;
+  /* --- Selected Book Details --- */
+.selected-book {
+    flex: 0 1 auto; /* shrink to fit content */
     min-width: 250px;
-    max-width: 400px;
+    max-width: 380px; /* slightly smaller for better fit */
     order: 2;
-  }
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(54,47,40,0.05);
+    padding: 18px;
+    transition: all 0.3s ease;
+}
+
+/* --- Responsive Layout --- */
+@media screen and (max-width: 1024px) {
+    .books-content {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .book-list {
+        flex: 1 1 60%;
+        min-width: 250px;
+        order: 1;
+    }
+
+    .selected-book {
+        flex: 0 1 auto;
+        min-width: 200px;
+        max-width: 380px;
+        order: 2;
+    }
 }
 
 @media screen and (max-width: 768px) {
-  .books-content {
-    display: flex;
-    flex-direction: column; /* stack vertically on smaller phones */
-    gap: 12px;
-  }
-  .selected-book {
-    display: none; /* hide selected book by default on small screens */
-  }
+    .books-content {
+        flex-direction: column; /* stack vertically */
+        gap: 12px;
+    }
+
+    .selected-book {
+        display: block; /* make visible on mobile */
+        width: 100%; /* take full width */
+        max-width: 100%;
+        min-width: auto;
+        order: 2;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+}
 }
