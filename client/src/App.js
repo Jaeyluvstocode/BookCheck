@@ -3,10 +3,14 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Books from './pages/Books';
-import Home from './pages/Home'; // ✅ Import new Home page
+import Home from './pages/Home';
 import Toast from './components/Toast';
 
-const API = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
+// ✅ Use environment variable for API URL
+const API = process.env.REACT_APP_API_URL || 
+            (process.env.NODE_ENV === 'production'
+              ? 'https://bookcheck-2-17hj.onrender.com/api'
+              : 'http://localhost:3001/api');
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -17,7 +21,7 @@ export default function App() {
       return null;
     }
   });
-  const [view, setView] = useState('home'); // ✅ Show Home first
+  const [view, setView] = useState('home');
 
   useEffect(() => {
     if (token) localStorage.setItem('token', token);
@@ -32,7 +36,7 @@ export default function App() {
   };
 
   // Toast notifications
-  const [toast, setToast] = React.useState(null);
+  const [toast, setToast] = useState(null);
   const notify = (message, type = 'info', duration = 3500) => {
     setToast({ message, type, duration });
   };
@@ -47,25 +51,17 @@ export default function App() {
         </h1>
         {user && (
           <div className="nav-buttons">
-            <span>
-              Welcome, <strong>{user.username}</strong>
-            </span>
-            <button onClick={() => setView('dashboard')} className="btn btn-primary">
-              Dashboard
-            </button>
-            <button onClick={() => setView('books')} className="btn btn-primary">
-              Books
-            </button>
-            <button onClick={handleLogout} className="btn btn-danger">
-              Logout
-            </button>
+            <span>Welcome, <strong>{user.username}</strong></span>
+            <button onClick={() => setView('dashboard')} className="btn btn-primary">Dashboard</button>
+            <button onClick={() => setView('books')} className="btn btn-primary">Books</button>
+            <button onClick={handleLogout} className="btn btn-danger">Logout</button>
           </div>
         )}
       </nav>
 
       {/* === Main Content === */}
       <main className="main">
-        {view === 'home' && <Home setView={setView} />} {/* ✅ New Home Page */}
+        {view === 'home' && <Home setView={setView} />}
 
         {view === 'login' && (
           <Login
@@ -81,12 +77,34 @@ export default function App() {
           />
         )}
 
-        {view === 'register' && <Register onLogin={() => setView('login')} apiBase={API} notify={notify} />}
+        {view === 'register' && (
+          <Register
+            onLogin={() => setView('login')}
+            apiBase={API}
+            notify={notify}
+          />
+        )}
 
-        {view === 'dashboard' && <Dashboard token={token} apiBase={API} user={user} setView={setView} notify={notify} />}
+        {view === 'dashboard' && (
+          <Dashboard
+            token={token}
+            apiBase={API}
+            user={user}
+            setView={setView}
+            notify={notify}
+          />
+        )}
 
-        {view === 'books' && <Books token={token} setView={setView} apiBase={API} notify={notify} />}
+        {view === 'books' && (
+          <Books
+            token={token}
+            setView={setView}
+            apiBase={API}
+            notify={notify}
+          />
+        )}
       </main>
+
       <Toast toast={toast} onClose={clearToast} />
     </div>
   );

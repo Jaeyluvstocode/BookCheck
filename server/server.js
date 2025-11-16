@@ -5,16 +5,24 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const bookRoutes = require('./routes/bookRoutes');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
-app.use(cors());
+
+// === CORS Configuration ===
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://bookcheck-frontend.onrender.com';
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true,
+}));
+
+// === Middleware ===
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 
-// if running in docker-compose with a secret mounted, load it
-const fs = require('fs');
+// === JWT Secret from .env or Docker Secret ===
 try {
   if (!process.env.JWT_SECRET) {
     const secretPath = '/run/secrets/jwt_secret';
@@ -27,40 +35,46 @@ try {
   console.warn('[SERVER] Could not load docker secret for JWT_SECRET', e.message);
 }
 
-// simple health endpoint
+// === MongoDB Connection ===
+const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST || '0.0.0.0';
+const MONGO_URI = process.env.MONGO_URI || 
+  'mongodb+srv://Joseph:joseph123@cluster0.osf8csu.mongodb.net/bookcheck?retryWrites=true&w=majority';
+
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err.message));
+
+// === Health Check ===
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', pid: process.pid, env: process.env.NODE_ENV || 'development' });
 });
 
-const PORT = process.env.PORT || 3001;
-const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(()=> console.log('MongoDB connected'))
-  .catch(err=> console.error('MongoDB connection error:', err.message));
+// === Serve React frontend in production ===
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  });
+}
 
-// Global error handler for unhandled rejections
+// === Global Error Handlers ===
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Global error handler for uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
 });
 
-// bind to all interfaces to avoid localhost/127.0.0.1 binding issues on some systems
-const HOST = process.env.HOST || '0.0.0.0';
-const server = app.listen(PORT, HOST, ()=> {
+// === Start Server ===
+const server = app.listen(PORT, HOST, () => {
   console.log(`[SERVER] Running on ${HOST}:${PORT} (pid=${process.pid})`);
 });
 
-server.on('listening', () => {
-  console.log('[SERVER] Event: listening fired');
-});
+server.on('listening', () => console.log('[SERVER] Event: listening fired'));
 
 server.on('error', (err) => {
   console.error('[SERVER] Error event:', err.code, err.message);
-  if (err.code === 'EADDRINUSE') {
-    console.error('[SERVER] Port', PORT, 'is already in use!');
-  }
+  if (err.code === 'EADDRINUSE') console.error('[SERVER] Port', PORT, 'is already in use!');
 });
