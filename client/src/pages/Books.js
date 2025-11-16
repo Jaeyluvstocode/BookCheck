@@ -8,13 +8,13 @@ export default function Books({ token, setView, apiBase, notify }) {
   const [selected, setSelected] = useState(null);
   const [reviewForm, setReviewForm] = useState({ rating: '', comment: '' });
   const [error, setError] = useState('');
+  const [mobileOverlay, setMobileOverlay] = useState(false); // for mobile overlay
 
   const headers = {
     'Content-Type': 'application/json',
     ...(token && { Authorization: 'Bearer ' + token }),
   };
 
-  // Load books from backend or dummy if empty
   const loadBooks = async () => {
     try {
       const params = new URLSearchParams();
@@ -23,10 +23,8 @@ export default function Books({ token, setView, apiBase, notify }) {
 
       const res = await fetch(`${apiBase}/books?${params.toString()}`, { headers });
       let data = await res.json();
-      // support old array response or new { success, books } shape
       if (data && data.books) data = data.books;
 
-      // Add dummy reviews for testing if none
       if (Array.isArray(data)) {
         data = data.map((b) => ({
           ...b,
@@ -67,6 +65,8 @@ export default function Books({ token, setView, apiBase, notify }) {
       }
 
       setSelected(data);
+      // Open overlay if on mobile
+      if (window.innerWidth <= 768) setMobileOverlay(true);
     } catch (err) {
       console.error(err);
       if (notify) notify('Failed to load book details', 'error');
@@ -81,21 +81,15 @@ export default function Books({ token, setView, apiBase, notify }) {
     if (!reviewForm.rating) return notify ? notify('Please select a rating.', 'error') : alert('Please select a rating.');
 
     try {
-      console.log('[submitReview] Sending:', reviewForm);
       const res = await fetch(`${apiBase}/books/${selected._id}/reviews`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
         body: JSON.stringify(reviewForm),
       });
 
       const data = await res.json();
-      console.log('[submitReview] Response status:', res.status, 'Data:', data);
       if (res.ok) {
         const saved = data.review || null;
-        // optimistic update: append the saved review returned by server
         setSelected((prev) => ({
           ...prev,
           reviews: saved ? [...(prev.reviews || []), saved] : prev.reviews,
@@ -118,11 +112,10 @@ export default function Books({ token, setView, apiBase, notify }) {
 
   const downloadPdf = (book) => {
     if (book.pdfUrl) {
-      window.open(book.pdfUrl, '_blank'); // Open the actual PDF if available
+      window.open(book.pdfUrl, '_blank');
     } else {
       const query = encodeURIComponent(`${book.title} ${book.author || ''}`);
-      const url = `https://www.pdfdrive.com/search?q=${query}`; // Search PDF Drive if none
-      window.open(url, '_blank');
+      window.open(`https://www.pdfdrive.com/search?q=${query}`, '_blank');
     }
   };
 
@@ -144,16 +137,8 @@ export default function Books({ token, setView, apiBase, notify }) {
       </button>
 
       <div className="search-filter">
-        <input
-          placeholder="Search by title or author"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <input
-          placeholder="Filter by genre"
-          value={genre}
-          onChange={(e) => setGenre(e.target.value)}
-        />
+        <input placeholder="Search by title or author" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <input placeholder="Filter by genre" value={genre} onChange={(e) => setGenre(e.target.value)} />
         <button className="search-btn" onClick={loadBooks}>Search</button>
       </div>
 
@@ -177,7 +162,9 @@ export default function Books({ token, setView, apiBase, notify }) {
           ))}
         </div>
 
-        <div className="selected-book">
+        {/* --- Selected Book Panel --- */}
+        <div className={`selected-book ${mobileOverlay ? 'mobile-overlay active' : ''}`}>
+          <button className="overlay-close-btn" onClick={() => setMobileOverlay(false)}>✕</button>
           <div className="selected-card">
             <h4>Selected Book</h4>
             {!selected ? (
@@ -193,17 +180,13 @@ export default function Books({ token, setView, apiBase, notify }) {
                 <div className="reviews-section">
                   <h5>Reviews</h5>
                   <div className="reviews-list">
-                    {selected.reviews?.length > 0 ? (
-                      selected.reviews.map((r) => (
-                        <div key={r._id} className="review-card">
-                          <div className="username">{r.username} <span>{renderStars(r.rating)}</span></div>
-                          <div className="comment">{r.comment}</div>
-                          <div className="date">{new Date(r.createdAt).toLocaleString()}</div>
-                        </div>
-                      ))
-                    ) : (
-                      <div>No reviews yet.</div>
-                    )}
+                    {selected.reviews?.length > 0 ? selected.reviews.map((r) => (
+                      <div key={r._id} className="review-card">
+                        <div className="username">{r.username} <span>{renderStars(r.rating)}</span></div>
+                        <div className="comment">{r.comment}</div>
+                        <div className="date">{new Date(r.createdAt).toLocaleString()}</div>
+                      </div>
+                    )) : <div>No reviews yet.</div>}
                   </div>
                 </div>
 
@@ -237,6 +220,9 @@ export default function Books({ token, setView, apiBase, notify }) {
             )}
           </div>
         </div>
+
+        {/* Overlay background for mobile */}
+        {mobileOverlay && <div className="mobile-overlay-bg active" onClick={() => setMobileOverlay(false)} />}
       </div>
     </div>
   );
