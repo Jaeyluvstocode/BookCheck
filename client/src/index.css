@@ -8,7 +8,7 @@
   font-family: 'Inter', 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
 
-:root{
+:root {
   --bg-1: #c7bdb3;
   --bg-2: #b3b0ae;
   --surface: #fffdfc;
@@ -23,7 +23,7 @@
 }
 
 body {
-  background: linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
   color: var(--text);
   min-height: 100vh;
   line-height: 1.6;
@@ -84,7 +84,6 @@ button, .btn, .cta { min-height: 40px; }
 }
 
 .auth-card h2 { margin-bottom: 14px; color: var(--text); }
-
 .auth-note { text-align: center; margin-top: 12px; color: var(--muted); font-size: 0.95rem; }
 
 /* Layout helper */
@@ -150,14 +149,8 @@ button, .btn, .cta { min-height: 40px; }
 }
 
 /* === Main Content === */
-.main {
-  flex: 1;
-  padding: 36px 20px;
-}
-
-.page-wrap {
-  padding-top: 18px;
-}
+.main { flex: 1; padding: 36px 20px; }
+.page-wrap { padding-top: 18px; }
 
 /* === Forms === */
 form {
@@ -169,22 +162,12 @@ form {
   box-shadow: var(--shadow);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-
 form:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 50px rgba(75, 63, 47, 0.15);
 }
-
-form h2 {
-  margin-bottom: 35px;
-  color: #6b4c3b;
-  font-weight: 700;
-  text-align: center;
-}
-
-form input,
-form textarea,
-form select {
+form h2 { margin-bottom: 35px; color: #6b4c3b; font-weight: 700; text-align: center; }
+form input, form textarea, form select {
   width: 100%;
   padding: 12px 14px;
   margin-bottom: 16px;
@@ -194,15 +177,11 @@ form select {
   font-size: 15px;
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
-
-form input:focus,
-form textarea:focus,
-form select:focus {
+form input:focus, form textarea:focus, form select:focus {
   outline: none;
   border-color: var(--primary-600);
   box-shadow: 0 8px 22px rgba(139,107,82,0.08);
 }
-
 form button {
   width: 100%;
   padding: 12px 16px;
@@ -215,7 +194,6 @@ form button {
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-
 form button:hover {
   background: #6b4c3b;
   transform: translateY(-2px);
@@ -229,15 +207,13 @@ form button:hover {
   margin-bottom: 26px;
   box-shadow: 0 10px 30px rgba(54,47,40,0.06);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  
 }
-
 .card:hover {
   transform: translateY(-6px);
   box-shadow: 0 25px 55px rgba(75, 63, 47, 0.15);
 }
 
-/* === Book Cards === */
+/* Book Cards */
 .book-card {
   display: flex;
   gap: 18px;
@@ -248,12 +224,10 @@ form button:hover {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   align-items: flex-start;
 }
-
 .book-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 35px rgba(75, 63, 47, 0.15);
 }
-
 .book-card img {
   width: 120px;
   height: 170px;
@@ -261,31 +235,26 @@ form button:hover {
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(54,47,40,0.06);
 }
-
 .book-card .info {
   flex: 1;
 }
-
 .book-card .info h3 {
   color: var(--text);
   margin-bottom: 8px;
   font-size: 1.15rem;
   font-weight: 700;
 }
-
 .book-card .info p {
   font-size: 14px;
   color: #4b3f2f;
   margin-bottom: 6px;
 }
-
 .book-card .buttons {
   margin-top: 14px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-
 .book-card .buttons button,
 .book-card .buttons a {
   border: none;
@@ -296,61 +265,15 @@ form button:hover {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+.book-card .buttons .edit { background: #d2a679; color: #fff; }
+.book-card .buttons .edit:hover { background: #b5845b; transform: translateY(-1px); }
+.book-card .buttons .delete { background-color: #c94c4c; color: #fff; }
+.book-card .buttons .delete:hover { background-color: #a83b3b; transform: translateY(-1px); }
+.book-card .buttons .pdf { background: #a2cbb1; color: #fff; text-decoration: none; }
+.book-card .buttons .pdf:hover { background: #7bb392; transform: translateY(-1px); }
+.book-card .rating { font-weight: 700; color: #d2a679; margin-top: 6px; display: inline-block; }
 
-/* Review form star buttons */
-.star-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 6px 8px;
-  color: var(--accent);
-}
-.star-btn.active { color: #d17a2a; transform: scale(1.05); }
-.review-error { color: #b00020; background: #fff0f0; padding: 8px 10px; border-radius: 8px; margin-bottom: 8px; }
-.submit-btn { background: #6b4c3b; color: #fff; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; }
-.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.book-card .buttons .edit {
-  background: #d2a679;
-  color: #fff;
-}
-
-.book-card .buttons .edit:hover {
-  background: #b5845b;
-  transform: translateY(-1px);
-}
-
-.book-card .buttons .delete {
-  background-color: #c94c4c;
-  color: #fff;
-}
-
-.book-card .buttons .delete:hover {
-  background-color: #a83b3b;
-  transform: translateY(-1px);
-}
-
-.book-card .buttons .pdf {
-  background: #a2cbb1;
-  color: #fff;
-  text-decoration: none;
-}
-
-.book-card .buttons .pdf:hover {
-  background: #7bb392;
-  transform: translateY(-1px);
-}
-
-/* Ratings */
-.book-card .rating {
-  font-weight: 700;
-  color: #d2a679;
-  margin-top: 6px;
-  display: inline-block;
-}
-
-/* === Review Cards === */
+/* Review Cards */
 .review-card {
   border-radius: 12px;
   padding: 12px 14px;
@@ -359,43 +282,18 @@ form button:hover {
   box-shadow: 0 6px 18px rgba(54,47,40,0.04);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-
 .review-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(75, 63, 47, 0.08);
 }
+.review-card .username { font-weight: 600; color: #6b4c3b; font-size: 14px; margin-bottom: 4px; }
+.review-card .comment { font-size: 14px; color: #4b3f2f; }
+.review-card .date { font-size: 12px; color: #998675; margin-top: 4px; }
 
-.review-card .username {
-  font-weight: 600;
-  color: #6b4c3b;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.review-card .comment {
-  font-size: 14px;
-  color: #4b3f2f;
-}
-
-.review-card .date {
-  font-size: 12px;
-  color: #998675;
-  margin-top: 4px;
-}
-
-/* === Buttons === */
-.btn {
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 9px 16px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-
+/* Buttons */
+.btn { cursor: pointer; border-radius: 10px; padding: 9px 16px; font-weight: 600; font-size: 0.95rem; transition: transform 0.12s ease, box-shadow 0.12s ease; }
 .btn-primary { background: var(--primary-600); color: #fff; }
 .btn-primary:hover { background: var(--primary); transform: translateY(-2px); }
-
 .btn-danger { background: #c94c4c; color: #fff; }
 .btn-danger:hover { background: #a83b3b; }
 
@@ -410,5 +308,16 @@ form button:hover {
 
 @media screen and (max-width: 600px) {
   .main { padding: 20px; }
-  .nav { flex-direction: column; gap: 15px; padding: 15px 20px; }
+  .nav {
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 20px;
+    background: linear-gradient(90deg, #8b6b52, #6b4c3b);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  }
+  .nav h1 { font-size: 1.6rem; text-align: center; }
+  .nav .nav-buttons { flex-direction: column; width: 100%; gap: 10px; align-items: stretch; }
+  .nav .nav-buttons button { width: 100%; font-size: 1rem; padding: 10px 0; }
 }
