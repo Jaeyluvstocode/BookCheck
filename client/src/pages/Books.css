@@ -31,8 +31,8 @@
 
 /* Book cards */
 .books-container .book-card {
-  background: #121212;
-  border: 1px solid #222;
+  background: #f5efef;
+  border: 1px solid #ece8e8;
   border-radius: 8px;
   padding: 14px;
   display: flex;
@@ -78,8 +78,8 @@
 /* ========== SELECTED BOOK PANEL ========== */
 .selected-card {
   flex: 1.2;
-  background: #181818;
-  border: 1px solid #222;
+  background: hsl(60, 100%, 97%);
+  border: 1px solid #f8f7f7;
   border-radius: 10px;
   padding: 20px;
   height: fit-content;
@@ -105,7 +105,7 @@
 .review-card {
   width: 100%;
   padding: 10px;
-  background: #202020;
+  background: #e6e3e3;
   border-radius: 6px;
   overflow-wrap: break-word;
   margin-bottom: 10px;
